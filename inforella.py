@@ -15,12 +15,21 @@ tree = os.walk(args.dir)
 
 
 def is_cache_file(name_file: str) -> bool:
-    """ Проверяет, является ли файл кешом Python интерпритатора """
+    """
+    Проверяет, является ли файл кешом Python интерпритатора
+    :param name_file: имя файла
+    :return: Имеет ли файл расширение .pyc
+    """
     return '.pyc' == name_file[-4::]
 
 
 def count_word_file(name_file: str, word: str) -> int:
-    """ Возвращает количество определённых слов в файле """
+    """
+    Возвращает количество определённых слов в файле
+    :param name_file: Имя файла
+    :param word: Слово по поиску в файле
+    :return: Количество слов
+    """
     count_words = 0
     with open(name_file, encoding='utf-8') as file_func:
         for line in file_func:
