@@ -1,8 +1,7 @@
 import os 
 import argparse
 import re
-from termcolor import colored
-from colorama import Fore, Back, Style
+import __colorize__ as color
 
 
 cli = argparse.ArgumentParser(description='Inforella')
@@ -53,13 +52,35 @@ try:
                 count_comments_code += count_word_file(files[0] + '/' + file, '#')
             except UnicodeDecodeError:
                 pass
-    print(f'Количество строк кода - {count_lines_code}\n')
-    print(f'Количество файлов в проекте - {count_files}\n')
-    print(f'Количество функций в проекте - {count_def_code}\n')
-    print(f'Количество комментарий в проекте - {count_comments_code}')
+
 
 except FileNotFoundError:
     print('Не удалось найти директорию')
 
 except Exception:
     print('Упс...\nЧто-то пошло не так')
+
+
+def if_machine(statement1, statement2, text, else_text):
+    if statement1 > statement2:
+        print(text)
+    else:
+        print(else_text)
+
+
+def validate():
+    print(f'Количество строк кода - {count_lines_code}\n')
+    print(f'Количество файлов в проекте - {count_files}\n')
+    print(f'Количество функций в проекте - {count_def_code}\n')
+    print(f'Количество комментарий в проекте - {count_comments_code}')
+
+    function_norm = count_lines_code / 35
+    comments_norm = count_lines_code / 15
+
+    if function_norm > count_def_code:
+        print(color.color_text(color.RED, 'Количество функций, меньше чем ожидалось!'))
+    else:
+        print(color.color_text(color.GREEN_BACKGROUND, 'Функций достаточно!'))
+
+
+validate()
