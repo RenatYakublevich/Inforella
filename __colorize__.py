@@ -1,8 +1,6 @@
-from colorama import Fore,Style
+from colorama import Fore, Style, init, Back
 
-GREEN_BACKGROUND = '\u001b[42;1m'
-RED = '\u001b[1m\u001b[31m'
-
+init()
 
 def color_text(color : str, text : str):
-    return color + text + '\033[39m'
+    return color + text + Style.RESET_ALL

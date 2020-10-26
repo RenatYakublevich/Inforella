@@ -62,6 +62,14 @@ except Exception:
 
 
 def if_machine(statement1, statement2, text, else_text):
+    """
+
+    :param statement1: первое условие
+    :param statement2: второе условие
+    :param text: текст, если первое условие верное
+    :param else_text: альтернативный текст
+    :return: None
+    """
     if statement1 > statement2:
         print(text)
     else:
@@ -69,18 +77,20 @@ def if_machine(statement1, statement2, text, else_text):
 
 
 def validate():
+    function_norm = count_lines_code / 41
+    comments_norm = count_lines_code / 15
+
     print(f'Количество строк кода - {count_lines_code}\n')
     print(f'Количество файлов в проекте - {count_files}\n')
     print(f'Количество функций в проекте - {count_def_code}\n')
+    if_machine(statement1=count_def_code, statement2=function_norm,
+               text=color.color_text(color.Back.GREEN, 'Функций достаточно!'),
+               else_text=color.color_text(color.Back.RED, 'Количество функций, меньше чем ожидалось!'))
     print(f'Количество комментарий в проекте - {count_comments_code}')
 
-    function_norm = count_lines_code / 35
-    comments_norm = count_lines_code / 15
 
-    if function_norm > count_def_code:
-        print(color.color_text(color.RED, 'Количество функций, меньше чем ожидалось!'))
-    else:
-        print(color.color_text(color.GREEN_BACKGROUND, 'Функций достаточно!'))
+
+
 
 
 validate()
