@@ -1,7 +1,8 @@
-import os 
+import os
 import argparse
 import re
-import __colorize__ as color
+import _colorize as color
+import _pep_check as pep
 
 
 cli = argparse.ArgumentParser(description='Inforella')
@@ -11,15 +12,15 @@ args = cli.parse_args()
 count_lines_code, count_def_code, count_files, count_comments_code = 0, 0, 0, 0
 # дерево файлов
 tree = os.walk(args.dir)
+pep_warning = ''
 
-
-def is_cache_file(name_file: str) -> bool:
+def is_python_file(name_file: str) -> bool:
     """
-    Проверяет, является ли файл кешом Python интерпритатора
+    Проверяет, имеет ли файл расширение .py
     :param name_file: имя файла
-    :return: Имеет ли файл расширение .pyc
+    :return: Имеет ли файл расширение .py
     """
-    return '.pyc' == name_file[-4::]
+    return '.py' == name_file[-3::]
 
 
 def count_word_file(name_file: str, word: str) -> int:
@@ -40,18 +41,21 @@ def count_word_file(name_file: str, word: str) -> int:
 try:
     for files in tree:
         for file in files[2]:
-            try:
-                # если файл не кеш
-                if not is_cache_file(file):
-                    count_files += 1
+            # если файл имеет расширение .py
+            if is_python_file(file):
+                path_file = files[0] + '/' + file
+                count_files += 1
                 # считаем кол-во строк в файле
                 count_lines_code += sum(1 for line in open(files[0] + '/' + file, encoding='utf-8'))
                 # считаем количество функций в файле
-                count_def_code += count_word_file(files[0] + '/' + file, 'def')
+                count_def_code += count_word_file(path_file, 'def')
                 # считаем количество комментарий в файле
-                count_comments_code += count_word_file(files[0] + '/' + file, '#')
-            except UnicodeDecodeError:
-                pass
+                count_comments_code += count_word_file(path_file, '#') + \
+                count_word_file(path_file, '"""')
+
+                # тесты на PEP 8
+                # pep_warning += pep.pep_test_machine(pep.pep_import_check(path_file), 'Всё гуд!', 'Всё хуйня давай по новой'))
+
 
 
 except FileNotFoundError:
@@ -63,7 +67,6 @@ except Exception:
 
 def if_machine(statement1, statement2, text, else_text):
     """
-
     :param statement1: первое условие
     :param statement2: второе условие
     :param text: текст, если первое условие верное
@@ -77,20 +80,26 @@ def if_machine(statement1, statement2, text, else_text):
 
 
 def validate():
-    function_norm = count_lines_code / 41
-    comments_norm = count_lines_code / 15
+    """ Вывод и валидация результатов """
+    GREEN = color.Back.GREEN
+    RED = color.Back.RED
+    CYAN = color.Back.CYAN
+
+    function_norm = int(count_lines_code / 30)
+    comments_norm = int(count_lines_code / 10)
 
     print(f'Количество строк кода - {count_lines_code}\n')
     print(f'Количество файлов в проекте - {count_files}\n')
     print(f'Количество функций в проекте - {count_def_code}\n')
     if_machine(statement1=count_def_code, statement2=function_norm,
-               text=color.color_text(color.Back.GREEN, 'Функций достаточно!'),
-               else_text=color.color_text(color.Back.RED, 'Количество функций, меньше чем ожидалось!'))
-    print(f'Количество комментарий в проекте - {count_comments_code}')
+               text=color.color_text(GREEN, 'Функций достаточно!'),
+               else_text=color.color_text(RED, 'Количество функций, меньше чем ожидалось!'))
+    print(f'Количество комментарий в проекте - {count_comments_code}\n')
+    if_machine(statement1=count_comments_code, statement2=comments_norm,
+               text=color.color_text(GREEN, 'Комментариев много,респект!'),
+               else_text=color.color_text(RED, 'Маловато комментариев, никто же не поймёт ничего...'))
+    color.line_design('#')
+    print(color.color_text(CYAN, 'PEP 8 ANALYSIS'))
 
-
-
-
-
-
+    
 validate()
