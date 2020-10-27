@@ -50,21 +50,16 @@ try:
                 # считаем количество функций в файле
                 count_def_code += count_word_file(path_file, 'def')
                 # считаем количество комментарий в файле
-                count_comments_code += count_word_file(path_file, '#') + \
-                count_word_file(path_file, '"""')
+                count_comments_code += count_word_file(path_file, '#') + count_word_file(path_file, '"""')
 
                 # тесты на PEP 8
-                # pep_warning += pep.pep_test_machine(pep.pep_import_check(path_file), 'Всё гуд!', 'Всё хуйня давай по новой'))
-
-
-
+                pep_warning += pep.pep_test_machine(statement=pep.pep_import_check(path_file),text='Не отсуплено 2 строки после импортов',path_file=file)
 except FileNotFoundError:
     print('Не удалось найти директорию')
 
-except Exception:
+except Exception as e:
+    print(e)
     print('Упс...\nЧто-то пошло не так')
-
-
 def if_machine(statement1, statement2, text, else_text):
     """
     :param statement1: первое условие
@@ -99,7 +94,9 @@ def validate():
                text=color.color_text(GREEN, 'Комментариев много,респект!'),
                else_text=color.color_text(RED, 'Маловато комментариев, никто же не поймёт ничего...'))
     color.line_design('#')
-    print(color.color_text(CYAN, 'PEP 8 ANALYSIS'))
+    if pep_warning:
+        print(color.color_text(CYAN, 'PEP 8 WARNING'))
+        print(pep_warning)
 
-    
+
 validate()

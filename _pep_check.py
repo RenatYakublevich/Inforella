@@ -1,6 +1,7 @@
-def pep_test_machine(statement1, text, else_text, name_file):
-    if not statement1:
-        return f'{name_file} - {else_text}'
+def pep_test_machine(statement, text, path_file):
+    if not statement:
+        return f'{path_file} - {text} \n'
+    return ''
 
 
 def line_is_import(string : str):
@@ -26,6 +27,4 @@ def pep_import_check(path_file: str):
             return True
 
     return False
-
-
 
