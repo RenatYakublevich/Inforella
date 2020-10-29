@@ -12,7 +12,12 @@ args = cli.parse_args()
 count_lines_code, count_def_code, count_files, count_comments_code = 0, 0, 0, 0
 # дерево файлов
 tree = os.walk(args.dir)
-pep_warning = ''
+
+GREEN = color.Back.GREEN
+RED = color.Back.RED
+CYAN = color.Back.CYAN
+
+all_files = []
 
 def is_python_file(name_file: str) -> bool:
     """
@@ -52,14 +57,26 @@ try:
                 # считаем количество комментарий в файле
                 count_comments_code += count_word_file(path_file, '#') + count_word_file(path_file, '"""')
 
-                # тесты на PEP 8
-                pep_warning += pep.pep_test_machine(statement=pep.pep_import_check(path_file),text='Не отсуплено 2 строки после импортов',path_file=file)
+                all_files.append(file)
 except FileNotFoundError:
     print('Не удалось найти директорию')
 
 except Exception as e:
     print(e)
     print('Упс...\nЧто-то пошло не так')
+
+def pep8_test():
+    pep_warnings = ''
+    for file in all_files:
+        pep_warnings += pep.pep_test_machine(statement=pep.pep_import_check(file),
+                                       text='Не отсуплено 2 строки после импортов', path_file=file) + \
+                                        pep.pep_line_length_check(file)
+
+    if pep_warnings:
+        color.line_design('#')
+        print(color.color_text(CYAN, 'PEP 8 WARNING'))
+        print(pep_warnings)
+
 def if_machine(statement1, statement2, text, else_text):
     """
     :param statement1: первое условие
@@ -76,10 +93,6 @@ def if_machine(statement1, statement2, text, else_text):
 
 def validate():
     """ Вывод и валидация результатов """
-    GREEN = color.Back.GREEN
-    RED = color.Back.RED
-    CYAN = color.Back.CYAN
-
     function_norm = int(count_lines_code / 30)
     comments_norm = int(count_lines_code / 10)
 
@@ -93,10 +106,6 @@ def validate():
     if_machine(statement1=count_comments_code, statement2=comments_norm,
                text=color.color_text(GREEN, 'Комментариев много,респект!'),
                else_text=color.color_text(RED, 'Маловато комментариев, никто же не поймёт ничего...'))
-    color.line_design('#')
-    if pep_warning:
-        print(color.color_text(CYAN, 'PEP 8 WARNING'))
-        print(pep_warning)
-
 
 validate()
+pep8_test()
