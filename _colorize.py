@@ -1,6 +1,5 @@
 from colorama import Fore, Style, init, Back
 
-
 init()
 
 

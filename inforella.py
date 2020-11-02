@@ -4,13 +4,13 @@ import re
 import _colorize as color
 import _pep_check as pep
 
-
 cli = argparse.ArgumentParser(description='Inforella')
 cli.add_argument("--dir", default='.', type=str, help="Директория для сканирования")
 
 args = cli.parse_args()
-count_lines_code, count_def_code, count_files, count_comments_code = 0, 0, 0, 0
+count_lines_code, count_def_code, count_comments_code = 0, 0, 0
 # дерево файлов
+print(args.dir)
 tree = os.walk(args.dir)
 
 GREEN = color.Back.GREEN
@@ -49,7 +49,6 @@ try:
             # если файл имеет расширение .py
             if is_python_file(file):
                 path_file = files[0] + '/' + file
-                count_files += 1
                 # считаем кол-во строк в файле
                 count_lines_code += sum(1 for line in open(files[0] + '/' + file, encoding='utf-8'))
                 # считаем количество функций в файле
@@ -57,7 +56,7 @@ try:
                 # считаем количество комментарий в файле
                 count_comments_code += count_word_file(path_file, '#') + count_word_file(path_file, '"""')
 
-                all_files.append(file)
+                all_files.append(path_file)
 except FileNotFoundError:
     print('Не удалось найти директорию')
 
@@ -69,13 +68,21 @@ def pep8_test():
     pep_warnings = ''
     for file in all_files:
         pep_warnings += pep.pep_test_machine(statement=pep.pep_import_check(file),
-                                       text='Не отсуплено 2 строки после импортов', path_file=file) + \
-                                        pep.pep_line_length_check(file)
+                                       text='Не отсуплено 2 строки после импортов', path_file=file)
+        pep_warnings += pep.pep_line_length_check(file)
 
     if pep_warnings:
         color.line_design('#')
         print(color.color_text(CYAN, 'PEP 8 WARNING'))
         print(pep_warnings)
+
+
+def tree_files(files: list):
+    print('Все файлы проекта :')
+    for file in files:
+        print(f'  - {file}')
+    print('')
+
 
 def if_machine(statement1, statement2, text, else_text):
     """
@@ -93,11 +100,12 @@ def if_machine(statement1, statement2, text, else_text):
 
 def validate():
     """ Вывод и валидация результатов """
+    tree_files(all_files)
     function_norm = int(count_lines_code / 30)
     comments_norm = int(count_lines_code / 10)
 
     print(f'Количество строк кода - {count_lines_code}\n')
-    print(f'Количество файлов в проекте - {count_files}\n')
+    print(f'Количество файлов в проекте - {len(all_files)}\n')
     print(f'Количество функций в проекте - {count_def_code}\n')
     if_machine(statement1=count_def_code, statement2=function_norm,
                text=color.color_text(GREEN, 'Функций достаточно!'),
@@ -107,5 +115,7 @@ def validate():
                text=color.color_text(GREEN, 'Комментариев много,респект!'),
                else_text=color.color_text(RED, 'Маловато комментариев, никто же не поймёт ничего...'))
 
-validate()
-pep8_test()
+
+if __name__ == '__main__':
+    validate()
+    pep8_test()

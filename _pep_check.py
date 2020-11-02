@@ -1,6 +1,6 @@
 def pep_test_machine(statement, text, path_file):
     if not statement:
-        return f'{path_file} - {text}\n'
+        return f'{path_file.split("/")[-1]} - {text}\n'
     return ''
 
 
@@ -38,7 +38,7 @@ def pep_line_length_check(path_file: str):
     for line in lines:
         if len(line) > 120:
             count_line_length_warning += 1
-            length_warnings += f'{path_file} - строка {count_lines + 1} превышает предел длины строки(120 символов)\n'
+            length_warnings += f'{path_file.split("/")[-1]} - строка {count_lines + 1} превышает предел длины строки(120 символов)\n'
         count_lines += 1
     if count_line_length_warning > 0:
         return length_warnings
