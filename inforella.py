@@ -4,20 +4,20 @@ import re
 import _colorize as color
 import _pep_check as pep
 
+
 cli = argparse.ArgumentParser(description='Inforella')
 cli.add_argument("--dir", default='.', type=str, help="Директория для сканирования")
 
 args = cli.parse_args()
 count_lines_code, count_def_code, count_comments_code = 0, 0, 0
 # дерево файлов
-print(args.dir)
 tree = os.walk(args.dir)
+
+all_files = []
 
 GREEN = color.Back.GREEN
 RED = color.Back.RED
 CYAN = color.Back.CYAN
-
-all_files = []
 
 def is_python_file(name_file: str) -> bool:
     """
@@ -53,7 +53,7 @@ try:
                 count_lines_code += sum(1 for line in open(files[0] + '/' + file, encoding='utf-8'))
                 # считаем количество функций в файле
                 count_def_code += count_word_file(path_file, 'def')
-                # считаем количество комментарий в файле
+                # считаем количество количествомментарий в файле
                 count_comments_code += count_word_file(path_file, '#') + count_word_file(path_file, '"""')
 
                 all_files.append(path_file)
@@ -61,14 +61,13 @@ except FileNotFoundError:
     print('Не удалось найти директорию')
 
 except Exception as e:
-    print(e)
-    print('Упс...\nЧто-то пошло не так')
+    print('Упс...\nЧто-то пошло не так\n - {e} -')
 
 def pep8_test():
     pep_warnings = ''
     for file in all_files:
         pep_warnings += pep.pep_test_machine(statement=pep.pep_import_check(file),
-                                       text='Не отсуплено 2 строки после импортов', path_file=file)
+                                            text='Не отсуплено 2 строки после импортов', path_file=file)
         pep_warnings += pep.pep_line_length_check(file)
 
     if pep_warnings:
@@ -80,22 +79,10 @@ def pep8_test():
 def tree_files(files: list):
     print('Все файлы проекта :')
     for file in files:
-        print(f'  - {file}')
+        print(f'  - {file.split("/")[-1]}')
     print('')
 
 
-def if_machine(statement1, statement2, text, else_text):
-    """
-    :param statement1: первое условие
-    :param statement2: второе условие
-    :param text: текст, если первое условие верное
-    :param else_text: альтернативный текст
-    :return: None
-    """
-    if statement1 > statement2:
-        print(text)
-    else:
-        print(else_text)
 
 
 def validate():
@@ -107,13 +94,11 @@ def validate():
     print(f'Количество строк кода - {count_lines_code}\n')
     print(f'Количество файлов в проекте - {len(all_files)}\n')
     print(f'Количество функций в проекте - {count_def_code}\n')
-    if_machine(statement1=count_def_code, statement2=function_norm,
-               text=color.color_text(GREEN, 'Функций достаточно!'),
-               else_text=color.color_text(RED, 'Количество функций, меньше чем ожидалось!'))
+    print(color.color_text(GREEN, 'Функций достаточно!')) if count_def_code > function_norm else \
+    print(color.color_text(RED, 'Количество функций, меньше чем ожидалось!'))
     print(f'Количество комментарий в проекте - {count_comments_code}\n')
-    if_machine(statement1=count_comments_code, statement2=comments_norm,
-               text=color.color_text(GREEN, 'Комментариев много,респект!'),
-               else_text=color.color_text(RED, 'Маловато комментариев, никто же не поймёт ничего...'))
+    print(color.color_text(GREEN, 'Комментариев много,респект!')) if count_comments_code > comments_norm else \
+    print(color.color_text(RED, 'Маловато комментариев, никто же не поймёт ничего...'))
 
 
 if __name__ == '__main__':
