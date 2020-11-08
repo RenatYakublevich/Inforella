@@ -39,7 +39,8 @@ def pep_line_length_check(path_file: str):
     count_lines = 0
     for line in lines:
         if len(line) > 120:
-            length_warnings += f'{path_file.split("/")[-1]} - строка {count_lines + 1} превышает предел длины строки(120 символов)\n'
+            length_warnings += f'{path_file.split("/")[-1]} - строка {count_lines + 1} ' \
+                    'превышает предел длины строки(120 символов)\n'
         count_lines += 1
     if length_warnings:
         return length_warnings

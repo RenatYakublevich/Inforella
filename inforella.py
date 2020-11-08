@@ -19,6 +19,7 @@ GREEN = color.Back.GREEN
 RED = color.Back.RED
 CYAN = color.Back.CYAN
 
+
 def is_python_file(name_file: str) -> bool:
     """
     Проверяет, имеет ли файл расширение .py
@@ -63,11 +64,12 @@ except FileNotFoundError:
 except Exception as e:
     print('Упс...\nЧто-то пошло не так\n - {e} -')
 
-def pep8_test():
+
+def pep8_test(all_file):
     pep_warnings = ''
-    for file in all_files:
+    for file in all_file:
         pep_warnings += pep.pep_test_machine(statement=pep.pep_import_check(file),
-                                            text='Не отсуплено 2 строки после импортов', path_file=file)
+                                             text='Не отсуплено 2 строки после импортов', path_file=file)
         pep_warnings += pep.pep_line_length_check(file)
 
     if pep_warnings:
@@ -76,13 +78,11 @@ def pep8_test():
         print(pep_warnings)
 
 
-def tree_files(files: list):
+def tree_files(files_: list):
     print('Все файлы проекта :')
-    for file in files:
+    for file in files_:
         print(f'  - {file.split("/")[-1]}')
     print('')
-
-
 
 
 def validate():
@@ -94,13 +94,15 @@ def validate():
     print(f'Количество строк кода - {count_lines_code}\n')
     print(f'Количество файлов в проекте - {len(all_files)}\n')
     print(f'Количество функций в проекте - {count_def_code}\n')
+
     print(color.color_text(GREEN, 'Функций достаточно!')) if count_def_code > function_norm else \
     print(color.color_text(RED, 'Количество функций, меньше чем ожидалось!'))
     print(f'Количество комментарий в проекте - {count_comments_code}\n')
+
     print(color.color_text(GREEN, 'Комментариев много,респект!')) if count_comments_code > comments_norm else \
     print(color.color_text(RED, 'Маловато комментариев, никто же не поймёт ничего...'))
 
 
 if __name__ == '__main__':
     validate()
-    pep8_test()
+    pep8_test(all_files)
