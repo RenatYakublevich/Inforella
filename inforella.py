@@ -62,7 +62,7 @@ except FileNotFoundError:
     print('Не удалось найти директорию')
 
 except Exception as e:
-    print('Упс...\nЧто-то пошло не так\n - {e} -')
+    print(f'Упс...\nЧто-то пошло не так\n - {e} -')
 
 
 def pep8_test(all_file):
