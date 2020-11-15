@@ -10,8 +10,8 @@ cli.add_argument("--dir", default='.', type=str, help="Директория дл
 
 args = cli.parse_args()
 count_lines_code, count_def_code, count_comments_code = 0, 0, 0
-
-tree = os.walk(args.dir) # дерево файлов
+# дерево файлов
+tree = os.walk(args.dir)
 
 all_files = []
 
