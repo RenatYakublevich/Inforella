@@ -68,8 +68,8 @@ except Exception as e:
 def pep8_test(all_file):
     pep_warnings = ''
     for file in all_file:
-        pep_warnings += pep.pep_test_machine(statement=pep.pep_import_check(file),
-                                             text='Не отсуплено 2 строки после импортов', path_file=file)
+        pep_warnings += f'{file.split("/")[-1]} - {"Не отсуплено 2 строки после импортов"}\n' \
+                        if not pep.pep_import_check(file) else ''
         pep_warnings += pep.pep_line_length_check(file)
 
     if pep_warnings:
@@ -78,9 +78,13 @@ def pep8_test(all_file):
         print(pep_warnings)
 
 
-def tree_files(files_: list):
+def tree_files(all_files: list):
+    """
+    :param files_:
+    :return:
+    """
     print('Все файлы проекта :')
-    for file in files_:
+    for file in all_files:
         print(f'  - {file.split("/")[-1]}')
     print('')
 
