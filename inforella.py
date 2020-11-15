@@ -3,18 +3,25 @@ import argparse
 import re
 import _colorize as color
 import _pep_check as pep
+import configparser
 
 
+# аргументы командой строки
 cli = argparse.ArgumentParser(description='Inforella')
 cli.add_argument("--dir", default='.', type=str, help="Директория для сканирования")
-
 args = cli.parse_args()
+
+# работа с конфигом
+config = configparser.ConfigParser()  # создаём объекта парсера
+config.read("config.ini")  # читаем конфиг
+
 count_lines_code, count_def_code, count_comments_code = 0, 0, 0
 # дерево файлов
 tree = os.walk(args.dir)
 
 all_files = []
 
+# Цвета
 GREEN = color.Back.GREEN
 RED = color.Back.RED
 CYAN = color.Back.CYAN
@@ -81,8 +88,8 @@ def pep8_test(all_file):
 
 def tree_files(all_files: list):
     """
-    :param files_:
-    :return:
+    :param all_files: Все файлы проекта
+    :return: None
     """
     print('Все файлы проекта :')
     for file in all_files:
@@ -93,8 +100,8 @@ def tree_files(all_files: list):
 def validate():
     """ Вывод и валидация результатов """
     tree_files(all_files)
-    function_norm = int(count_lines_code / 30)
-    comments_norm = int(count_lines_code / 10)
+    function_norm = int(count_lines_code / int(config["Norms"]["function_norm"]))
+    comments_norm = int(count_lines_code / int(config["Norms"]["comments_norm"]))
 
     print(f'Количество строк кода - {count_lines_code}\n')
     print(f'Количество файлов в проекте - {len(all_files)}\n')

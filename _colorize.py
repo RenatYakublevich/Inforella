@@ -1,4 +1,4 @@
-from colorama import Fore, Style, init, Back
+from colorama import Style, init, Back
 
 
 init()
@@ -10,4 +10,3 @@ def color_text(color: str, text: str):
 
 def line_design(char: str):
     print(f'{char} ' * 20)
-
