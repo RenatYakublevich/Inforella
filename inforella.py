@@ -71,6 +71,7 @@ def pep8_test(all_file):
         pep_warnings += f'{file.split("/")[-1]} - {"Не отсуплено 2 строки после импортов"}\n' \
                         if not pep.pep_import_check(file) else ''
         pep_warnings += pep.pep_line_length_check(file)
+        pep_warnings += pep.comments_correction(file)
 
     if pep_warnings:
         color.line_design('#')
