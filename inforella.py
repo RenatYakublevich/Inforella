@@ -62,7 +62,7 @@ try:
                 # считаем количество функций в файле
                 count_def_code += count_word_file(path_file, 'def')
                 # считаем количество количествомментарий в файле
-                count_comments_code += count_word_file(path_file, '#') + count_word_file(path_file, '"""')
+                count_comments_code += count_word_file(path_file, '#') + int(count_word_file(path_file, '"""') / 2)
 
                 all_files.append(path_file)
 except FileNotFoundError:
@@ -77,8 +77,9 @@ def pep8_test(all_file):
     for file in all_file:
         pep_warnings += f'{file.split("/")[-1]} - {"Не отсуплено 2 строки после импортов"}\n' \
                         if not pep.pep_import_check(file) else ''
-        pep_warnings += pep.pep_line_length_check(file)
+        pep_warnings += pep.pep_line_length_check(file, int(config['Norms']['length_line_limit']))
         pep_warnings += pep.comments_correction(file)
+        pep_warnings += pep.commas_style_check(file)
 
     if pep_warnings:
         color.line_design('#')
