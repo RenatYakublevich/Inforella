@@ -98,9 +98,35 @@ def tree_files(all_files: list):
     print('')
 
 
+def testing_variable_length(all_files):
+    """
+    :param all_files: все файлы
+    Функция возвращает словарь, где ключи - длина строк, а значения - количество подобных строк в коде
+    """
+    all_variable_length = {}
+
+    for file in all_files:
+        with open(file, encoding='utf-8') as file:
+            for line in file.readlines():
+                if re.findall(r'\S+ = \S+', line) and not re.findall(r'\S+ \+= \S+',line):
+                    name_variable = line.split('=')[0].rstrip(' ').lstrip(' ').split('.')[-1]
+                    if not len(name_variable) in all_variable_length:
+                        all_variable_length[len(name_variable)] = 1
+                    else:
+                        all_variable_length[len(name_variable)] += 1
+
+    return all_variable_length
+
+
 def validate():
     """ Вывод и валидация результатов """
     tree_files(all_files)
+
+    print('Длина названий перменных\nФормат: длина строки -> количество подобных строк\n')
+    for key, value in testing_variable_length(all_files).items():
+        print(f'{key} символов -> в {value} строках')
+    print('')
+
     function_norm = int(count_lines_code / int(config["Norms"]["function_norm"]))
     comments_norm = int(count_lines_code / int(config["Norms"]["comments_norm"]))
 
