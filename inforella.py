@@ -50,6 +50,23 @@ def count_word_file(name_file: str, word: str) -> int:
 
     return count_words
 
+def is_char_in_quotes(symbol: str,line: str) -> bool:
+    """
+    Функция возвращает bool значения, находится ли char в кавычках
+    :param symbol: символ
+    :param line: строка
+    :return: True или False
+    """
+    try:
+        position_symbol = line.index(symbol)
+        for symbol in range(position_symbol,-1,-1):
+            if line[symbol] == "'" or line[symbol] == '"':
+                return False
+        return True
+
+    except ValueError:
+        return False
+
 
 try:
     for files in tree:
@@ -108,7 +125,7 @@ def testing_variable_length(all_files):
     for file in all_files:
         with open(file, encoding='utf-8') as file:
             for line in file.readlines():
-                if re.findall(r'\S+ = \S+', line) and not re.findall(r'\S+ \+= \S+',line):
+                if re.findall(r'\S+ = \S+', line) and not re.findall(r'\S+ \+= \S+',line) and not re.findall(',',line.split('=')[0]) and is_char_in_quotes('=',line):
                     name_variable = line.split('=')[0].rstrip(' ').lstrip(' ').split('.')[-1]
                     if not len(name_variable) in all_variable_length:
                         all_variable_length[len(name_variable)] = 1
